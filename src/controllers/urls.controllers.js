@@ -12,6 +12,7 @@ export async function shortener(req, res) {
   try {
     // Buscando ID do usuário no qual o token foi designado.
     const { userId } = (await db.query(`SELECT * FROM sessions WHERE token=$1`, [token])).rows[0];
+    if (!userId) return res.sendStatus(401);
 
     // Inserindo a url no banco de dados e retornando o ID e a url curta do mesmo.
     const { rows } = await db.query(
