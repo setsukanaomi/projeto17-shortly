@@ -10,8 +10,10 @@ export async function shortener(req, res) {
   if (!token) return res.sendStatus(401);
 
   try {
+    // Buscando ID do usuário no qual o token foi designado.
     const { userId } = (await db.query(`SELECT * FROM sessions WHERE token=$1`, [token])).rows[0];
 
+    // Inserindo a url no banco de dados e retornando o ID e a url curta do mesmo.
     const { rows } = await db.query(
       `INSERT INTO urls ("userId", url, "shortUrl") VALUES ($1, $2, $3) RETURNING id, "shortUrl"`,
       [userId, url, shortUrl]

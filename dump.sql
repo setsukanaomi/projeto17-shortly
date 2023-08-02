@@ -5,7 +5,7 @@
 -- Dumped from database version 13.9 (Ubuntu 13.9-1.pgdg20.04+1)
 -- Dumped by pg_dump version 15.3
 
--- Started on 2023-08-02 01:00:49
+-- Started on 2023-08-02 02:38:25
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -424,7 +424,7 @@ ALTER SEQUENCE public.sessions_id_seq OWNED BY public.sessions.id;
 
 
 --
--- TOC entry 231 (class 1259 OID 5060673)
+-- TOC entry 231 (class 1259 OID 5061517)
 -- Name: urls; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -432,12 +432,13 @@ CREATE TABLE public.urls (
     id integer NOT NULL,
     "userId" integer NOT NULL,
     url text NOT NULL,
+    "shortUrl" text NOT NULL,
     "createdAt" timestamp without time zone DEFAULT now() NOT NULL
 );
 
 
 --
--- TOC entry 230 (class 1259 OID 5060671)
+-- TOC entry 230 (class 1259 OID 5061515)
 -- Name: urls_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -505,7 +506,7 @@ ALTER TABLE ONLY public.sessions ALTER COLUMN id SET DEFAULT nextval('public.ses
 
 
 --
--- TOC entry 3968 (class 2604 OID 5060676)
+-- TOC entry 3968 (class 2604 OID 5061520)
 -- Name: urls id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -539,7 +540,7 @@ ALTER TABLE ONLY public.sessions
 
 
 --
--- TOC entry 3979 (class 2606 OID 5060682)
+-- TOC entry 3979 (class 2606 OID 5061526)
 -- Name: urls urls_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -575,7 +576,7 @@ ALTER TABLE ONLY public.sessions
 
 
 --
--- TOC entry 3981 (class 2606 OID 5060683)
+-- TOC entry 3981 (class 2606 OID 5061527)
 -- Name: urls urls_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -583,7 +584,7 @@ ALTER TABLE ONLY public.urls
     ADD CONSTRAINT "urls_userId_fkey" FOREIGN KEY ("userId") REFERENCES public.users(id);
 
 
--- Completed on 2023-08-02 01:01:06
+-- Completed on 2023-08-02 02:38:42
 
 --
 -- PostgreSQL database dump complete
