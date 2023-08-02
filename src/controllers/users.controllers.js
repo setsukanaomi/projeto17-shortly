@@ -1,4 +1,5 @@
 import bcrypt from "bcrypt";
+import { v4 as uuid } from "uuid";
 import { db } from "../database/database.connection.js";
 
 export async function signup(req, res) {
@@ -11,6 +12,22 @@ export async function signup(req, res) {
 
     await db.query(`INSERT INTO users (name, email, password) VALUES ($1, $2, $3)`, [name, email, cryptoPassword]);
     res.sendStatus(201);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+}
+
+export async function signin(req, res) {
+  const { email, password } = req.body;
+  const token = uuid();
+
+  try {
+    const users = await db.query(`SELECT * from users WHERE email=$1`, [email]);
+    const user = users.rows[0];
+
+    if (!user || !bcrypt.compareSync(password, user.password)) return res.sendStatus(401);
+
+    res.status(200).send(token);
   } catch (error) {
     res.status(500).send(error.message);
   }
