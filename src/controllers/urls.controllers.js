@@ -23,3 +23,16 @@ export async function shortener(req, res) {
     res.status(500).send(error.message);
   }
 }
+
+export async function getUrlById(req, res) {
+  const { id } = req.params;
+
+  try {
+    const url = (await db.query(`SELECT urls.id, urls."shortUrl", urls.url FROM urls WHERE id=$1`, [id])).rows[0];
+    if (!url) return res.sendStatus(404);
+
+    res.status(200).send(url);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+}
