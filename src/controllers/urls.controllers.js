@@ -11,7 +11,7 @@ export async function shortener(req, res) {
 
   try {
     const user = (await db.query(`SELECT * FROM sessions WHERE token=$1`, [token])).rows[0];
-    if (!user.userId) return res.sendStatus(401);
+    if (!user) return res.sendStatus(401);
 
     const { rows } = await db.query(
       `INSERT INTO urls ("userId", url, "shortUrl") VALUES ($1, $2, $3) RETURNING id, "shortUrl"`,

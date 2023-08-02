@@ -22,8 +22,7 @@ export async function signin(req, res) {
   const token = uuid();
 
   try {
-    const users = await db.query(`SELECT * from users WHERE email=$1`, [email]);
-    const user = users.rows[0];
+    const user = (await db.query(`SELECT * from users WHERE email=$1`, [email])).rows[0];
 
     if (!user || !bcrypt.compareSync(password, user.password)) return res.sendStatus(401);
 
