@@ -27,7 +27,8 @@ export async function signin(req, res) {
 
     if (!user || !bcrypt.compareSync(password, user.password)) return res.sendStatus(401);
 
-    res.status(200).send(token);
+    await db.query(`INSERT INTO sessions ("userId", token) VALUES ($1, $2)`, [user.id, token]);
+    res.status(200).send({ token: token });
   } catch (error) {
     res.status(500).send(error.message);
   }
