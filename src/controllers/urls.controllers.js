@@ -36,3 +36,19 @@ export async function getUrlById(req, res) {
     res.status(500).send(error.message);
   }
 }
+
+export async function openShortUrl(req, res) {
+  const { shortUrl } = req.params;
+
+  try {
+    const url = (await db.query(`SELECT * FROM urls WHERE "shortUrl"=$1`, [shortUrl])).rows[0];
+    if (!url) return res.sendStatus(404);
+
+    const visit = url.visitCount + 1;
+    await db.query(`UPDATE urls SET "visitCount"=$1 WHERE "shortUrl"=$2`, [visit, shortUrl]);
+
+    res.redirect(url.url);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+}
