@@ -64,3 +64,30 @@ export async function openShortUrl(req, res) {
     res.status(500).send(error.message);
   }
 }
+
+export async function deleteUrl(req, res) {
+  const { id } = req.params;
+  const { authorization } = req.headers;
+  const token = authorization?.replace("Bearer ", "");
+
+  if (!token) return res.sendStatus(401);
+
+  try {
+    const url = (await db.query(`SELECT * FROM urls WHERE id=$1`, [id]))
+      .rows[0];
+    if (!url) return res.sendStatus(404);
+
+    const user = (
+      await db.query(`SELECT * FROM sessions WHERE "userId"=$1 AND token=$2`, [
+        url.userId,
+        token,
+      ])
+    ).rows[0];
+    if (!user) return res.sendStatus(401);
+
+    await db.query(`DELETE FROM urls WHERE id=$1`, [id]);
+    res.sendStatus(204);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+}
