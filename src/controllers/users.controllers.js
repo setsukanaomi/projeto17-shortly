@@ -84,3 +84,21 @@ export async function getMe(req, res) {
     res.status(500).send(error.message);
   }
 }
+
+export async function getRanking(req, res) {
+  try {
+    const ranking = (
+      await db.query(`SELECT users.id, users.name, COUNT(url) AS "linksCount", SUM("visitCount") AS "visitCount"
+      FROM users 
+      JOIN urls ON users.id = urls."userId"
+      GROUP BY users.id, users.name
+      ORDER BY "visitCount" DESC
+      LIMIT 10;
+    `)
+    ).rows;
+
+    res.status(200).send(ranking);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+}
