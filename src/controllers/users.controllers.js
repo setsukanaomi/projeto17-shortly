@@ -32,3 +32,42 @@ export async function signin(req, res) {
     res.status(500).send(error.message);
   }
 }
+
+export async function getMe(req, res) {
+  const { authorization } = req.headers;
+  const token = authorization?.replace("Bearer ", "");
+
+  if (!token) return res.sendStatus(401);
+  try {
+    const user = (
+      await db.query(
+        `SELECT sessions."userId" AS id, users.name, SUM("visitCount") AS "visitCount"
+        FROM sessions 
+        JOIN users ON sessions."userId" = users.id
+        JOIN urls ON sessions."userId" = urls."userId"
+        WHERE token=$1
+        GROUP BY sessions."userId", users.name;`,
+        [token]
+      )
+    ).rows[0];
+
+    const urls = (
+      await db.query(`SELECT urls.id, urls.url, urls."shortUrl", urls."visitCount" FROM urls WHERE urls."userId"=$1`, [
+        user.id,
+      ])
+    ).rows;
+
+    const userAndUrls = {
+      ...user,
+      shortenedUrls: [
+        {
+          ...urls,
+        },
+      ],
+    };
+
+    res.send(userAndUrls);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+}
