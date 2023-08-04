@@ -60,6 +60,7 @@ export async function getMe(req, res) {
         [token]
       )
     ).rows[0];
+    if (!user) return res.sendStatus(401);
 
     const urls = (
       await db.query(
