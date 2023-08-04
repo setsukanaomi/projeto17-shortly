@@ -10,7 +10,9 @@ export async function shortener(req, res) {
   if (!token) return res.sendStatus(401);
 
   try {
-    const user = (await db.query(`SELECT * FROM sessions WHERE token=$1`, [token])).rows[0];
+    const user = (
+      await db.query(`SELECT * FROM sessions WHERE token=$1`, [token])
+    ).rows[0];
     if (!user) return res.sendStatus(401);
 
     const { rows } = await db.query(
@@ -28,7 +30,12 @@ export async function getUrlById(req, res) {
   const { id } = req.params;
 
   try {
-    const url = (await db.query(`SELECT urls.id, urls."shortUrl", urls.url FROM urls WHERE id=$1`, [id])).rows[0];
+    const url = (
+      await db.query(
+        `SELECT urls.id, urls."shortUrl", urls.url FROM urls WHERE id=$1`,
+        [id]
+      )
+    ).rows[0];
     if (!url) return res.sendStatus(404);
 
     res.status(200).send(url);
@@ -41,15 +48,19 @@ export async function openShortUrl(req, res) {
   const { shortUrl } = req.params;
 
   try {
-    const url = (await db.query(`SELECT * FROM urls WHERE "shortUrl"=$1`, [shortUrl])).rows[0];
+    const url = (
+      await db.query(`SELECT * FROM urls WHERE "shortUrl"=$1`, [shortUrl])
+    ).rows[0];
     if (!url) return res.sendStatus(404);
 
     const visit = url.visitCount + 1;
-    await db.query(`UPDATE urls SET "visitCount"=$1 WHERE "shortUrl"=$2`, [visit, shortUrl]);
+    await db.query(`UPDATE urls SET "visitCount"=$1 WHERE "shortUrl"=$2`, [
+      visit,
+      shortUrl,
+    ]);
 
     res.redirect(url.url);
   } catch (error) {
     res.status(500).send(error.message);
   }
 }
-
